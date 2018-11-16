@@ -192,6 +192,7 @@ struct misc_config_s {
 	
 	  char *comment;	/* Comment or NULL. */
 	  char *commentcmd;	/* Command to append more to Comment or NULL. */
+          char *beaconcheckcmd; /* Command to decide whether to beacon. */
 
 
 	} beacon[MAX_BEACONS];

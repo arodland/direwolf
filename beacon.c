@@ -801,6 +801,15 @@ static void beacon_send (int j, dwgps_info_t *gpsinfo)
 	      }
 	      strlcat (beacon_text, ":", sizeof(beacon_text));
 
+              if (bp->beaconcheckcmd != NULL) {
+                char do_beacon[6];
+                int k;
+
+                k = dw_run_cmd (bp->beaconcheckcmd, 2, do_beacon, sizeof(do_beacon));
+                if (k <= 0 || (strcasecmp(do_beacon, "YES") != 0 && strcasecmp(do_beacon, "TRUE") != 0)) {
+                  return;
+                }
+              }
 
 /*
  * If the COMMENTCMD option was specified, run specified command to get variable part.

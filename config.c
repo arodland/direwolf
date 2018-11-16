@@ -5188,6 +5188,9 @@ static int beacon_options(char *cmd, struct beacon_s *b, int line, struct audio_
 	  else if (strcasecmp(keyword, "COMMENTCMD") == 0) {
 	    b->commentcmd = strdup(value);
 	  }
+          else if (strcasecmp(keyword, "BEACONCHECKCMD") == 0) {
+            b->beaconcheckcmd = strdup(value);
+          }
 	  else if (strcasecmp(keyword, "COMPRESS") == 0 || strcasecmp(keyword, "COMPRESSED") == 0) {
 	    b->compress = atoi(value);
 	  }
