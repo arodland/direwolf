@@ -410,7 +410,7 @@ void aprs_tt_sequence (int chan, char *msg)
 
 	if (err == 0 && strlen(tt_config.ttcmd) > 0) {
 
-	  dw_run_cmd (tt_config.ttcmd, 1, script_response, sizeof(script_response));
+	  dw_run_cmd (tt_config.ttcmd, 1, script_response, sizeof(script_response), NULL);
 
 	}
 
@@ -1750,7 +1750,7 @@ static void raw_tt_data_to_app (int chan, char *msg)
  *
  *----------------------------------------------------------------*/
 
-int dw_run_cmd (char *cmd, int oneline, char *result, size_t resultsiz) 
+int dw_run_cmd (char *cmd, int oneline, char *result, size_t resultsiz, int *errptr) 
 {
 	FILE *fp;
 
@@ -1768,14 +1768,23 @@ int dw_run_cmd (char *cmd, int oneline, char *result, size_t resultsiz)
 	  }
 
 	  if ((err = pclose(fp)) != 0) {	 
-	    text_color_set(DW_COLOR_ERROR);
-	    dw_printf ("ERROR: Unable to run \"%s\"\n", cmd);
-	    // On Windows, non-existent file produces "Operation not permitted"
-	    // Maybe we should put in a test for whether file exists.
-	    dw_printf ("%s\n", strerror(err));
+            if (errptr != NULL) {
+              *errptr = err;
+            }
+            else {
+              text_color_set(DW_COLOR_ERROR);
+              dw_printf ("ERROR: Unable to run \"%s\"\n", cmd);
+              // On Windows, non-existent file produces "Operation not permitted"
+              // Maybe we should put in a test for whether file exists.
+              dw_printf ("%s\n", strerror(err));
+            }
 
 	    return (-1);
 	  }
+
+          if (errptr != NULL) {
+            *errptr = 0;
+          }
 
 	  // take out any newline characters.
 	

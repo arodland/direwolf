@@ -816,17 +816,18 @@ static void beacon_send (int j, dwgps_info_t *gpsinfo)
 
 	      if (bp->commentcmd != NULL) {
 	        char var_comment[AX25_MAX_INFO_LEN];
-	        int k;
+	        int k, exitstatus;
 
 	        /* Run given command to get variable part of comment. */
 
-	        k = dw_run_cmd (bp->commentcmd, 2, var_comment, sizeof(var_comment));
-	        if (k > 0) {
-	          strlcat (super_comment, var_comment, sizeof(super_comment));
-	        }
-	        else {
-		  text_color_set(DW_COLOR_ERROR);
-	          dw_printf ("xBEACON, config file line %d, COMMENTCMD failure.\n", bp->lineno);
+	        k = dw_run_cmd (bp->commentcmd, 2, var_comment, sizeof(var_comment), &exitstatus);
+                if (k > 0) {
+                  strlcat (super_comment, var_comment, sizeof(super_comment));
+                }
+                else if (exitstatus != 0) {
+                  text_color_set(DW_COLOR_ERROR);
+                  dw_printf ("xBEACON, config file line %d, COMMENTCMD failure (exit status %d).\n", bp->lineno, exitstatus);
+                  return;
 	        }
 	      }
 
@@ -937,17 +938,17 @@ static void beacon_send (int j, dwgps_info_t *gpsinfo)
 		  }
 		  else if (bp->custom_infocmd != NULL) {
 		    char info_part[AX25_MAX_INFO_LEN];
-		    int k;
+		    int k, exitstatus;
 
 	            /* Run given command to obtain the info part for packet. */
 
-		    k = dw_run_cmd (bp->custom_infocmd, 2, info_part, sizeof(info_part));
+		    k = dw_run_cmd (bp->custom_infocmd, 2, info_part, sizeof(info_part), &exitstatus);
 		    if (k > 0) {
 	              strlcat (beacon_text, info_part, sizeof(beacon_text));
 	            }
 	            else {
 		      text_color_set(DW_COLOR_ERROR);
-	              dw_printf ("CBEACON, config file line %d, INFOCMD failure.\n", bp->lineno);
+	              dw_printf ("CBEACON, config file line %d, INFOCMD failure (exit status %d).\n", bp->lineno, exitstatus);
 		      strlcpy (beacon_text, "", sizeof(beacon_text));  // abort!
 	            }
 		  }

@@ -183,7 +183,7 @@ void aprs_tt_dao_to_desc (char *dao, char *str);
 
 void aprs_tt_sequence (int chan, char *msg);
 
-int dw_run_cmd (char *cmd, int oneline, char *result, size_t resultsiz);
+int dw_run_cmd (char *cmd, int oneline, char *result, size_t resultsiz, int *errptr);
 
 
 #endif
